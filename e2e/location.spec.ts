@@ -67,10 +67,14 @@ test.describe('Booking flow — trip step', () => {
 
     await page.goto('/book/', { waitUntil: 'networkidle' });
 
-    // Switch destination to "Other Address" to reveal the manual entry + geolocate button
-    const destSection = page.locator('text=Destination').locator('..').locator('..');
-    await destSection.getByText('Other Address').click();
+    // Switch destination to "Other Address" to reveal the manual entry + geolocate button.
+    // There are two "Pickup Location" / "Destination" EndpointPicker blocks on the page;
+    // scope to the one whose heading is literally "Destination" and grab its second
+    // "Other Address" toggle button (pickup's is first).
+    const otherAddressButtons = page.getByRole('button', { name: '📍 Other Address' });
+    await otherAddressButtons.nth(1).click();
 
+    const destSection = page.locator('label:has-text("Destination")').locator('xpath=..');
     const geolocateBtn = destSection.getByText('Use My Current Location');
     await geolocateBtn.click();
 
