@@ -1,10 +1,10 @@
 import { test, expect } from '@playwright/test';
 
 /**
- * Real end-to-end smoke test for the "Use My Current Location" flow.
+ * Real end-to-end smoke test for the booking flow's trip step.
  *
- * This exists because unit tests on extracted logic (lib/geolocation.ts)
- * do NOT catch real-world integration failures like:
+ * This exists because unit tests on extracted logic (lib/geolocation.ts,
+ * lib/trip.ts) do NOT catch real-world integration failures like:
  *   - Google Maps API key referrer/domain restrictions
  *   - Missing/misconfigured env vars on the deployed site
  *   - Script loading failures
@@ -14,7 +14,7 @@ import { test, expect } from '@playwright/test';
  *   E2E_BASE_URL=https://cyberpicksupatl.com npx playwright test
  */
 
-test.describe('Booking flow — location step', () => {
+test.describe('Booking flow — trip step', () => {
   test('page loads without console errors', async ({ page }) => {
     const consoleErrors: string[] = [];
     page.on('console', (msg) => {
@@ -27,15 +27,33 @@ test.describe('Booking flow — location step', () => {
     expect(consoleErrors, `Console errors on page load:\n${consoleErrors.join('\n')}`).toEqual([]);
   });
 
-  test('destination input and location button are visible', async ({ page }) => {
+  test('pickup/destination pickers and schedule options are visible', async ({ page }) => {
     await page.goto('/book/', { waitUntil: 'networkidle' });
 
-    await expect(page.getByPlaceholder(/where are you going/i)).toBeVisible();
-    await expect(page.getByText('Use My Current Location')).toBeVisible();
+    await expect(page.getByText('Pickup Location')).toBeVisible();
+    await expect(page.getByText('Destination')).toBeVisible();
+    await expect(page.getByText('When do you need pickup?')).toBeVisible();
+    await expect(page.getByText('Right Now')).toBeVisible();
+    await expect(page.getByText('Schedule Ahead')).toBeVisible();
+    await expect(page.getByText('Airport (ATL)').first()).toBeVisible();
   });
 
-  test('"Use My Current Location" successfully fills the address field', async ({ browser }) => {
-    // Grant geolocation permission and set a known coordinate (ATL area)
+  test('airport pickup requires a terminal selection', async ({ page }) => {
+    await page.goto('/book/', { waitUntil: 'networkidle' });
+
+    // Pickup defaults to Airport/Domestic; fill a destination address manually
+    const destInput = page.locator('input[placeholder="Enter an address"]');
+    await destInput.waitFor({ state: 'visible' });
+    await destInput.fill('123 Main St, Atlanta, GA 30303');
+
+    await page.getByRole('button', { name: /get my quote/i }).click();
+
+    // Should proceed to quote step (no validation error) since terminal defaults to domestic
+    const errorVisible = await page.locator('.text-red-400').isVisible().catch(() => false);
+    expect(errorVisible, 'Should not show a validation error with default domestic terminal selected').toBe(false);
+  });
+
+  test('"Use My Current Location" on the destination picker fills the address', async ({ browser }) => {
     const context = await browser.newContext({
       permissions: ['geolocation'],
       geolocation: { latitude: 33.749, longitude: -84.388 },
@@ -48,33 +66,19 @@ test.describe('Booking flow — location step', () => {
     });
 
     await page.goto('/book/', { waitUntil: 'networkidle' });
-    await page.getByText('Use My Current Location').click();
 
-    // Wait for either the address field to populate or an error message to appear
-    const addressInput = page.getByPlaceholder(/where are you going/i);
-    const errorMessage = page.locator('.text-red-400');
+    // Switch destination to "Other Address" to reveal the manual entry + geolocate button
+    const destSection = page.locator('text=Destination').locator('..').locator('..');
+    await destSection.getByText('Other Address').click();
 
-    await Promise.race([
-      addressInput.waitFor({ state: 'visible' }).then(async () => {
-        await expect
-          .poll(async () => addressInput.inputValue(), { timeout: 10_000 })
-          .not.toBe('');
-      }),
-      errorMessage.waitFor({ state: 'visible', timeout: 10_000 }).catch(() => {}),
-    ]);
+    const geolocateBtn = destSection.getByText('Use My Current Location');
+    await geolocateBtn.click();
 
-    const errorVisible = await errorMessage.isVisible().catch(() => false);
-    if (errorVisible) {
-      const errorText = await errorMessage.textContent();
-      throw new Error(
-        `Geolocation flow surfaced an error: "${errorText}". Console errors: ${consoleErrors.join('; ') || 'none'}`,
-      );
-    }
+    const destInput = destSection.locator('input[placeholder="Enter an address"]');
+    await expect
+      .poll(async () => destInput.inputValue(), { timeout: 10_000 })
+      .not.toBe('');
 
-    const addressValue = await addressInput.inputValue();
-    expect(addressValue.trim().length, 'Address field should be populated after geolocation').toBeGreaterThan(0);
-
-    // Explicitly fail on known Google Maps auth errors even if the UI didn't surface them
     const mapsAuthError = consoleErrors.find((e) =>
       /RefererNotAllowedMapError|InvalidKeyMapError|ApiNotActivatedMapError/.test(e),
     );

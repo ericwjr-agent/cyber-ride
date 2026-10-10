@@ -2,23 +2,25 @@
 
 import { useState } from 'react';
 import { PayPalScriptProvider } from '@paypal/react-paypal-js';
-import LocationStep from './LocationStep';
+import TripStep     from './TripStep';
 import QuoteStep    from './QuoteStep';
 import ContactStep  from './ContactStep';
 import PaymentStep  from './PaymentStep';
-import type { BookingStep, LocationData, QuoteData, ContactInfo } from '@/lib/types';
+import { formatScheduleLabel } from '@/lib/trip';
+import { formatUSD } from '@/lib/pricing';
+import type { BookingStep, TripData, QuoteData, ContactInfo } from '@/lib/types';
 
 const STEPS: { key: BookingStep; label: string }[] = [
-  { key: 'location',  label: 'Destination'  },
-  { key: 'quote',     label: 'Quote'         },
-  { key: 'contact',   label: 'Flight Info'   },
-  { key: 'payment',   label: 'Payment'       },
-  { key: 'confirmed', label: 'Confirmed'    },
+  { key: 'trip',       label: 'Trip'          },
+  { key: 'quote',      label: 'Quote'         },
+  { key: 'contact',    label: 'Contact'       },
+  { key: 'payment',    label: 'Payment'       },
+  { key: 'confirmed',  label: 'Confirmed'     },
 ];
 
 export default function BookingFlow() {
-  const [step,    setStep]    = useState<BookingStep>('location');
-  const [location, setLocation] = useState<LocationData | null>(null);
+  const [step,    setStep]    = useState<BookingStep>('trip');
+  const [trip,    setTrip]    = useState<TripData | null>(null);
   const [quote,   setQuote]   = useState<QuoteData | null>(null);
   const [contact, setContact] = useState<ContactInfo | null>(null);
 
@@ -54,16 +56,17 @@ export default function BookingFlow() {
       )}
 
       {/* Steps */}
-      {step === 'location' && (
-        <LocationStep
-          onNext={(loc) => { setLocation(loc); setStep('quote'); }}
+      {step === 'trip' && (
+        <TripStep
+          initial={trip ?? undefined}
+          onNext={(t) => { setTrip(t); setStep('quote'); }}
         />
       )}
-      {step === 'quote' && location && (
+      {step === 'quote' && trip && (
         <QuoteStep
-          location={location}
+          trip={trip}
           onNext={(q) => { setQuote(q); setStep('contact'); }}
-          onBack={() => setStep('location')}
+          onBack={() => setStep('trip')}
         />
       )}
       {step === 'contact' && quote && (
@@ -73,14 +76,14 @@ export default function BookingFlow() {
           onBack={() => setStep('quote')}
         />
       )}
-      {step === 'payment' && location && quote && contact && (
+      {step === 'payment' && trip && quote && contact && (
         <PayPalScriptProvider options={{
           clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID ?? 'test',
           currency: 'USD',
           intent: 'capture',
         }}>
           <PaymentStep
-            location={location}
+            trip={trip}
             quote={quote}
             contact={contact}
             onSuccess={() => setStep('confirmed')}
@@ -88,40 +91,39 @@ export default function BookingFlow() {
           />
         </PayPalScriptProvider>
       )}
-      {step === 'confirmed' && location && quote && contact && (
-        <ConfirmedView location={location} quote={quote} contact={contact} />
+      {step === 'confirmed' && trip && quote && contact && (
+        <ConfirmedView trip={trip} quote={quote} contact={contact} />
       )}
     </div>
   );
 }
 
 function ConfirmedView({
-  location, quote, contact
-}: { location: LocationData; quote: QuoteData; contact: ContactInfo }) {
-  const { formatUSD } = require('@/lib/pricing');
-
+  trip, quote, contact
+}: { trip: TripData; quote: QuoteData; contact: ContactInfo }) {
   return (
     <div className="text-center py-8">
       <div className="text-7xl mb-6">⚡</div>
       <h2 className="text-3xl font-bold text-brand-cyan mb-3">You&apos;re booked!</h2>
       <p className="text-gray-300 text-lg mb-8">
-        Your Cybertruck ride from the airport is confirmed.
+        Your Cybertruck ride is confirmed.
       </p>
 
       <div className="card text-left mb-6">
         <h3 className="font-semibold mb-4 text-gray-300 uppercase text-xs tracking-widest">Booking Summary</h3>
         <div className="space-y-3 text-sm">
-          <Row label="Destination"   value={location.address} />
-          <Row label="Flight"         value={contact.flightNumber} />
-          <Row label="Pickup Time"    value={contact.pickupTime} />
-          <Row label="ETA"            value={`~${quote.etaMinutes} minutes`} />
-          <Row label="Total Paid"     value={formatUSD(quote.priceCents)} className="text-brand-cyan" />
+          <Row label="Pickup"        value={trip.pickup.address} />
+          <Row label="Destination"   value={trip.destination.address} />
+          <Row label="Pickup Time"   value={formatScheduleLabel(trip.schedule)} />
+          {contact.flightNumber && <Row label="Flight" value={contact.flightNumber} />}
+          <Row label="ETA"           value={`~${quote.etaMinutes} minutes`} />
+          <Row label="Total Paid"    value={formatUSD(quote.priceCents)} className="text-brand-cyan" />
         </div>
       </div>
 
       <div className="bg-blue-900/20 border border-blue-800/40 rounded-xl p-4 text-sm text-blue-300 text-left">
         <p className="font-semibold mb-1">📱 What happens next</p>
-        <p>Your driver will text you at <strong>{contact.phone}</strong> with their real-time location once they&apos;re at the airport.</p>
+        <p>Your driver will text you at <strong>{contact.phone}</strong> with their real-time location before pickup.</p>
       </div>
     </div>
   );

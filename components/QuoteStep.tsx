@@ -2,21 +2,19 @@
 
 import { useState, useEffect } from 'react';
 import { priceBreakdown, formatUSD, BUFFER_MINUTES } from '@/lib/pricing';
-import type { LocationData, QuoteData } from '@/lib/types';
-
-// Airport origin: Hartsfield-Jackson Atlanta International Airport
-const AIRPORT_ADDRESS = 'Hartsfield-Jackson Atlanta International Airport, Atlanta, GA 30320';
+import { formatScheduleLabel } from '@/lib/trip';
+import type { TripData, QuoteData } from '@/lib/types';
 
 interface Props {
-  location: LocationData;
-  onNext:   (quote: QuoteData) => void;
-  onBack:   () => void;
+  trip: TripData;
+  onNext: (quote: QuoteData) => void;
+  onBack: () => void;
 }
 
-export default function QuoteStep({ location, onNext, onBack }: Props) {
-  const [quote,   setQuote]   = useState<QuoteData | null>(null);
+export default function QuoteStep({ trip, onNext, onBack }: Props) {
+  const [quote, setQuote] = useState<QuoteData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error,   setError]   = useState('');
+  const [error, setError] = useState('');
 
   useEffect(() => {
     if (typeof window === 'undefined' || !window.google) {
@@ -30,28 +28,31 @@ export default function QuoteStep({ location, onNext, onBack }: Props) {
     }
     calculate();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location]);
+  }, [trip]);
 
   async function calculate() {
     setLoading(true);
     setError('');
 
-    const destLatLng = location.lat && location.lng
-      ? new window.google.maps.LatLng(location.lat, location.lng)
-      : location.address;
+    const originLatLng = trip.pickup.lat && trip.pickup.lng
+      ? new window.google.maps.LatLng(trip.pickup.lat, trip.pickup.lng)
+      : trip.pickup.address;
+    const destLatLng = trip.destination.lat && trip.destination.lng
+      ? new window.google.maps.LatLng(trip.destination.lat, trip.destination.lng)
+      : trip.destination.address;
 
     const service = new window.google.maps.DistanceMatrixService();
 
     service.getDistanceMatrix(
       {
-        origins:      [AIRPORT_ADDRESS],
+        origins: [originLatLng],
         destinations: [destLatLng],
-        travelMode:   window.google.maps.TravelMode.DRIVING,
-        unitSystem:   window.google.maps.UnitSystem.IMPERIAL,
+        travelMode: window.google.maps.TravelMode.DRIVING,
+        unitSystem: window.google.maps.UnitSystem.IMPERIAL,
       },
       (response, status) => {
         if (status !== 'OK' || !response) {
-          setError('Could not calculate distance. Please check your address and try again.');
+          setError('Could not calculate distance. Please check your addresses and try again.');
           setLoading(false);
           return;
         }
@@ -59,26 +60,26 @@ export default function QuoteStep({ location, onNext, onBack }: Props) {
         const element = response.rows[0]?.elements[0];
 
         if (!element || element.status !== 'OK') {
-          setError('Location not reachable by road. Please enter a different address.');
+          setError('Route not reachable by road. Please enter different addresses.');
           setLoading(false);
           return;
         }
 
-        const distanceMiles  = element.distance.value * 0.000621371;
-        const drivingMinutes  = Math.ceil(element.duration.value / 60);
-        const etaMinutes      = drivingMinutes + BUFFER_MINUTES;
+        const distanceMiles = element.distance.value * 0.000621371;
+        const drivingMinutes = Math.ceil(element.duration.value / 60);
+        const etaMinutes = drivingMinutes + BUFFER_MINUTES;
 
         const bd = priceBreakdown(distanceMiles);
 
         setQuote({
-          distanceMiles:    Math.round(distanceMiles * 10) / 10,
+          distanceMiles: Math.round(distanceMiles * 10) / 10,
           drivingMinutes,
           etaMinutes,
-          priceCents:       bd.total,
+          priceCents: bd.total,
           breakdown: { base: bd.base, mileageFee: bd.mileageFee },
         });
         setLoading(false);
-      }
+      },
     );
   }
 
@@ -104,12 +105,28 @@ export default function QuoteStep({ location, onNext, onBack }: Props) {
 
   return (
     <div className="space-y-6">
-      {/* Destination confirmed */}
-      <div className="flex items-start gap-3 p-4 bg-gray-900 rounded-xl border border-gray-800">
-        <span className="text-lg mt-0.5">📍</span>
-        <div>
-          <p className="text-xs text-gray-500 mb-1">Your destination</p>
-          <p className="text-sm font-medium text-gray-200">{location.address}</p>
+      {/* Trip confirmed */}
+      <div className="space-y-2">
+        <div className="flex items-start gap-3 p-4 bg-gray-900 rounded-xl border border-gray-800">
+          <span className="text-lg mt-0.5">{trip.pickup.kind === 'airport' ? '✈️' : '📍'}</span>
+          <div>
+            <p className="text-xs text-gray-500 mb-1">Pickup</p>
+            <p className="text-sm font-medium text-gray-200">{trip.pickup.address}</p>
+          </div>
+        </div>
+        <div className="flex items-start gap-3 p-4 bg-gray-900 rounded-xl border border-gray-800">
+          <span className="text-lg mt-0.5">{trip.destination.kind === 'airport' ? '✈️' : '📍'}</span>
+          <div>
+            <p className="text-xs text-gray-500 mb-1">Destination</p>
+            <p className="text-sm font-medium text-gray-200">{trip.destination.address}</p>
+          </div>
+        </div>
+        <div className="flex items-start gap-3 p-4 bg-gray-900 rounded-xl border border-gray-800">
+          <span className="text-lg mt-0.5">🕐</span>
+          <div>
+            <p className="text-xs text-gray-500 mb-1">Pickup Time</p>
+            <p className="text-sm font-medium text-gray-200">{formatScheduleLabel(trip.schedule)}</p>
+          </div>
         </div>
       </div>
 
@@ -122,7 +139,7 @@ export default function QuoteStep({ location, onNext, onBack }: Props) {
         </div>
         <div className="card text-center">
           <p className="text-4xl font-black text-white mb-1">{quote.distanceMiles.toFixed(1)}</p>
-          <p className="text-xs text-gray-400 uppercase tracking-widest">miles from airport</p>
+          <p className="text-xs text-gray-400 uppercase tracking-widest">miles</p>
         </div>
       </div>
 

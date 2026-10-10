@@ -48,10 +48,26 @@ export default function HomePage() {
             <span className="text-brand-cyan glow-cyan-text">Ride in a Cybertruck.</span>
           </h1>
 
-          <p className="text-xl md:text-2xl text-gray-400 max-w-2xl mx-auto mb-12 leading-relaxed">
+          <p className="text-xl md:text-2xl text-gray-400 max-w-2xl mx-auto mb-6 leading-relaxed">
             Premium airport pickup powered by Tesla Cybertruck.
             Transparent pricing. Book in minutes.
           </p>
+
+          {/* Feature pills */}
+          <div className="flex flex-wrap items-center justify-center gap-3 mb-12">
+            {[
+              { icon: '🧳', text: 'Massive covered luggage space' },
+              { icon: '🪑', text: 'Seats up to 4 passengers' },
+              { icon: '📺', text: 'Rear-seat entertainment' },
+            ].map((f) => (
+              <span key={f.text}
+                    className="inline-flex items-center gap-2 bg-gray-900/70 border border-gray-800
+                               rounded-full px-4 py-2 text-sm text-gray-300">
+                <span>{f.icon}</span>
+                {f.text}
+              </span>
+            ))}
+          </div>
 
           {/* CTAs */}
           <div className="flex flex-col items-center justify-center gap-4 mb-16">
@@ -97,16 +113,38 @@ export default function HomePage() {
 
           <div className="grid md:grid-cols-4 gap-8">
             {[
-              { icon: '📍', step: '01', title: 'Enter Destination', desc: 'Type your destination address. We calculate distance and price instantly.' },
-              { icon: '✈️', step: '02', title: 'Flight Details', desc: 'Share your flight number and pickup time so we track your arrival.' },
+              { icon: '📍', step: '01', title: 'Set Pickup & Drop-off', desc: 'Choose airport (domestic or international terminal) or any address — going or coming from ATL.' },
+              { icon: '⏱️', step: '02', title: 'Pick Your Time', desc: 'Book in advance, or request a ride right now with about an hour wait.' },
               { icon: '💳', step: '03', title: 'Pay & Book', desc: 'Pay the full fare upfront via PayPal. No surprises, no hidden fees.' },
-              { icon: '🚗', step: '04', title: 'Ride in Style', desc: 'Your Cybertruck driver picks you up at the airport and texts you their location.' },
+              { icon: '🚗', step: '04', title: 'Ride in Style', desc: 'Your Cybertruck driver picks you up and texts you their live location.' },
             ].map((item) => (
               <div key={item.step} className="card hover:border-brand-cyan/40 transition-colors group">
                 <div className="text-3xl mb-4">{item.icon}</div>
                 <p className="text-brand-cyan font-mono text-sm mb-2">{item.step}</p>
                 <h3 className="text-lg font-bold mb-2">{item.title}</h3>
                 <p className="text-gray-400 text-sm leading-relaxed">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Ride Features */}
+      <section className="py-24 px-6">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-4xl font-bold text-center mb-4">Built for the Ride</h2>
+          <p className="text-gray-400 text-center mb-16 text-lg">Everything you need, nothing you don&apos;t.</p>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              { icon: '🧳', title: 'Massive, Covered Luggage Space', desc: 'The Cybertruck’s vault and frunk swallow suitcases, golf bags, and carry-ons — all fully covered and secure, rain or shine.' },
+              { icon: '🪑', title: 'Room for 4 Riders', desc: 'Spacious seating comfortably fits up to 4 passengers with plenty of legroom for the whole group.' },
+              { icon: '📺', title: 'Rear-Seat Entertainment', desc: 'Screens and audio in the back keep everyone entertained on the way to or from the airport.' },
+            ].map((f) => (
+              <div key={f.title} className="card hover:border-brand-cyan/40 transition-colors group text-center">
+                <div className="text-4xl mb-4">{f.icon}</div>
+                <h3 className="text-lg font-bold mb-2">{f.title}</h3>
+                <p className="text-gray-400 text-sm leading-relaxed">{f.desc}</p>
               </div>
             ))}
           </div>

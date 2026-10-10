@@ -3,20 +3,23 @@
 import { useState } from 'react';
 import { PayPalButtons, usePayPalScriptReducer } from '@paypal/react-paypal-js';
 import { formatUSD } from '@/lib/pricing';
-import type { LocationData, QuoteData, ContactInfo } from '@/lib/types';
+import { formatScheduleLabel } from '@/lib/trip';
+import type { TripData, QuoteData, ContactInfo } from '@/lib/types';
 
 interface Props {
-  location:  LocationData;
+  trip:      TripData;
   quote:     QuoteData;
   contact:   ContactInfo;
   onSuccess: () => void;
   onBack:    () => void;
 }
 
-export default function PaymentStep({ location, quote, contact, onSuccess, onBack }: Props) {
+export default function PaymentStep({ trip, quote, contact, onSuccess, onBack }: Props) {
   const [{ isPending }] = usePayPalScriptReducer();
   const [error,      setError]      = useState('');
   const [processing, setProcessing] = useState(false);
+
+  const scheduleLabel = formatScheduleLabel(trip.schedule);
 
   /** Capture the FULL amount immediately — full payment at booking */
   const createOrder = async (): Promise<string> => {
@@ -25,7 +28,7 @@ export default function PaymentStep({ location, quote, contact, onSuccess, onBac
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         amount:      (quote.priceCents / 100).toFixed(2),
-        description: `Cyber Ride — Airport Ride to ${location.address} (${formatUSD(quote.priceCents)})`,
+        description: `Cyber Ride — ${trip.pickup.address} to ${trip.destination.address} (${formatUSD(quote.priceCents)})`,
         intent:      'CAPTURE',
       }),
     });
@@ -53,13 +56,14 @@ export default function PaymentStep({ location, quote, contact, onSuccess, onBac
         body: JSON.stringify({
           customerName:    contact.name,
           customerEmail:   contact.email,
-          customerPhone:    contact.phone,
+          customerPhone:   contact.phone,
           flightNumber:    contact.flightNumber,
-          pickupTime:       contact.pickupTime,
-          address:         location.address,
-          etaMinutes:       quote.etaMinutes,
-          distanceMiles:    quote.distanceMiles,
-          totalCents:       quote.priceCents,
+          pickupAddress:   trip.pickup.address,
+          destinationAddress: trip.destination.address,
+          scheduleLabel,
+          etaMinutes:      quote.etaMinutes,
+          distanceMiles:   quote.distanceMiles,
+          totalCents:      quote.priceCents,
         }),
       }).catch(console.warn);
 
@@ -77,17 +81,23 @@ export default function PaymentStep({ location, quote, contact, onSuccess, onBac
         <h3 className="text-xs uppercase tracking-widest text-gray-500 mb-4">Order Summary</h3>
         <div className="space-y-2 text-sm mb-4">
           <div className="flex justify-between">
-            <span className="text-gray-400">Destination</span>
-            <span className="text-right">{location.address}</span>
+            <span className="text-gray-400">Pickup</span>
+            <span className="text-right">{trip.pickup.address}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-gray-400">Flight</span>
-            <span>{contact.flightNumber}</span>
+            <span className="text-gray-400">Destination</span>
+            <span className="text-right">{trip.destination.address}</span>
           </div>
           <div className="flex justify-between">
             <span className="text-gray-400">Pickup Time</span>
-            <span>{contact.pickupTime}</span>
+            <span>{scheduleLabel}</span>
           </div>
+          {contact.flightNumber && (
+            <div className="flex justify-between">
+              <span className="text-gray-400">Flight</span>
+              <span>{contact.flightNumber}</span>
+            </div>
+          )}
           <div className="flex justify-between pt-2 border-t border-gray-700 text-lg font-bold">
             <span>Total</span>
             <span className="text-brand-cyan">{formatUSD(quote.priceCents)}</span>

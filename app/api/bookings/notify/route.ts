@@ -8,8 +8,9 @@ export async function POST(request: Request) {
 
     const {
       customerName, customerEmail, customerPhone,
-      flightNumber, pickupTime,
-      address, etaMinutes, distanceMiles,
+      flightNumber,
+      pickupAddress, destinationAddress, scheduleLabel,
+      etaMinutes, distanceMiles,
       totalCents,
     } = body;
 
@@ -24,8 +25,9 @@ export async function POST(request: Request) {
       customerEmail,
       customerPhone,
       flightNumber,
-      pickupTime,
-      address,
+      pickupAddress,
+      destinationAddress,
+      scheduleLabel,
       etaMinutes,
       distanceMiles,
       totalCents,

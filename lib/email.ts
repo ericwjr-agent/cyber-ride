@@ -13,8 +13,9 @@ export interface BookingEmailData {
   customerEmail:  string;
   customerPhone:  string;
   flightNumber:   string;
-  pickupTime:     string;
-  address:        string;
+  pickupAddress:  string;
+  destinationAddress: string;
+  scheduleLabel:  string;
   etaMinutes:     number;
   distanceMiles:  number;
   totalCents:     number;
@@ -105,16 +106,20 @@ function customerConfirmationHtml(d: BookingEmailData): string {
       </p>
       <table style="width:100%;border-collapse:collapse;font-size:14px;">
         <tr>
-          <td style="padding:6px 0;color:#9ca3af;">Destination</td>
-          <td style="text-align:right;color:#fff;">${d.address}</td>
+          <td style="padding:6px 0;color:#9ca3af;">Pickup</td>
+          <td style="text-align:right;color:#fff;">${d.pickupAddress}</td>
         </tr>
         <tr>
+          <td style="padding:6px 0;color:#9ca3af;">Destination</td>
+          <td style="text-align:right;color:#fff;">${d.destinationAddress}</td>
+        </tr>
+        ${d.flightNumber ? `<tr>
           <td style="padding:6px 0;color:#9ca3af;">Flight Number</td>
           <td style="text-align:right;color:#fff;">${d.flightNumber}</td>
-        </tr>
+        </tr>` : ''}
         <tr>
           <td style="padding:6px 0;color:#9ca3af;">Pickup Time</td>
-          <td style="text-align:right;color:#fff;">${d.pickupTime}</td>
+          <td style="text-align:right;color:#fff;">${d.scheduleLabel}</td>
         </tr>
         <tr>
           <td style="padding:6px 0;color:#9ca3af;">Distance</td>
@@ -131,7 +136,7 @@ function customerConfirmationHtml(d: BookingEmailData): string {
     <div style="background:#0f172a;border:1px solid #1e3a5f;border-radius:12px;padding:16px;margin-bottom:32px;">
       <p style="margin:0 0 6px;font-weight:600;font-size:14px;">📱 What happens next</p>
       <p style="margin:0;color:#93c5fd;font-size:13px;">
-        Your driver will text <strong>${d.customerPhone}</strong> with their live location once they're en route to the airport.
+        Your driver will text <strong>${d.customerPhone}</strong> with their live location before pickup.
       </p>
     </div>
   `);
@@ -157,9 +162,10 @@ function hostAlertHtml(d: BookingEmailData): string {
       <table style="width:100%;border-collapse:collapse;font-size:14px;">
         <tr><td style="padding:5px 0;color:#9ca3af;width:120px;">Phone</td><td style="color:#fff;">${d.customerPhone}</td></tr>
         <tr><td style="padding:5px 0;color:#9ca3af;">Email</td><td style="color:#fff;">${d.customerEmail}</td></tr>
-        <tr><td style="padding:5px 0;color:#9ca3af;">Flight</td><td style="color:#fff;">${d.flightNumber}</td></tr>
-        <tr><td style="padding:5px 0;color:#9ca3af;">Pickup Time</td><td style="color:#fff;">${d.pickupTime}</td></tr>
-        <tr><td style="padding:5px 0;color:#9ca3af;">Destination</td><td style="color:#fff;">${d.address}</td></tr>
+        ${d.flightNumber ? `<tr><td style="padding:5px 0;color:#9ca3af;">Flight</td><td style="color:#fff;">${d.flightNumber}</td></tr>` : ''}
+        <tr><td style="padding:5px 0;color:#9ca3af;">Pickup Time</td><td style="color:#fff;">${d.scheduleLabel}</td></tr>
+        <tr><td style="padding:5px 0;color:#9ca3af;">Pickup</td><td style="color:#fff;">${d.pickupAddress}</td></tr>
+        <tr><td style="padding:5px 0;color:#9ca3af;">Destination</td><td style="color:#fff;">${d.destinationAddress}</td></tr>
         <tr><td style="padding:5px 0;color:#9ca3af;">Distance</td><td style="color:#fff;">${d.distanceMiles} mi · ETA ~${d.etaMinutes} min</td></tr>
       </table>
     </div>

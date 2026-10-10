@@ -11,12 +11,11 @@ interface Props {
 }
 
 export default function ContactStep({ quote, onNext, onBack }: Props) {
-  const [name,         setName]         = useState('');
-  const [phone,        setPhone]        = useState('');
-  const [email,        setEmail]        = useState('');
+  const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
   const [flightNumber, setFlightNumber] = useState('');
-  const [pickupTime,   setPickupTime]   = useState('');
-  const [error,        setError]        = useState('');
+  const [error, setError] = useState('');
 
   const formatPhone = (val: string) => {
     const digits = val.replace(/\D/g, '').slice(0, 10);
@@ -37,20 +36,11 @@ export default function ContactStep({ quote, onNext, onBack }: Props) {
       setError('Please enter a valid email address.');
       return;
     }
-    if (!flightNumber.trim()) {
-      setError('Please enter your flight number.');
-      return;
-    }
-    if (!pickupTime.trim()) {
-      setError('Please enter your preferred pickup time.');
-      return;
-    }
     onNext({
       name: name.trim(),
       phone: cleanPhone,
       email: email.trim(),
       flightNumber: flightNumber.trim().toUpperCase(),
-      pickupTime: pickupTime.trim(),
     });
   };
 
@@ -109,28 +99,15 @@ export default function ContactStep({ quote, onNext, onBack }: Props) {
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-2">Flight Number</label>
+        <label className="block text-sm font-medium text-gray-300 mb-2">Flight Number (optional)</label>
         <input
           type="text"
           value={flightNumber}
           onChange={(e) => setFlightNumber(e.target.value)}
           placeholder="DL1234"
           className="input-brand"
-          required
         />
-        <p className="text-xs text-gray-600 mt-1">So we can track your arrival.</p>
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-300 mb-2">Preferred Pickup Time</label>
-        <input
-          type="datetime-local"
-          value={pickupTime}
-          onChange={(e) => setPickupTime(e.target.value)}
-          className="input-brand"
-          required
-        />
-        <p className="text-xs text-gray-600 mt-1">When should your driver be at the airport?</p>
+        <p className="text-xs text-gray-600 mt-1">If flying, so we can track your arrival.</p>
       </div>
 
       {error && (
