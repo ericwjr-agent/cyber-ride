@@ -130,13 +130,20 @@ export default function QuoteStep({ trip, onNext, onBack }: Props) {
         </div>
       </div>
 
-      {/* ETA + Distance */}
+      {/* ETA (right-now rides only) + Distance */}
       <div className="grid grid-cols-2 gap-4">
-        <div className="card text-center">
-          <p className="text-4xl font-black text-brand-cyan mb-1">~{quote.etaMinutes}</p>
-          <p className="text-xs text-gray-400 uppercase tracking-widest">min ETA</p>
-          <p className="text-xs text-gray-600 mt-1">incl. 20 min buffer</p>
-        </div>
+        {trip.schedule.mode === 'now' ? (
+          <div className="card text-center">
+            <p className="text-4xl font-black text-brand-cyan mb-1">~{quote.etaMinutes}</p>
+            <p className="text-xs text-gray-400 uppercase tracking-widest">min ETA</p>
+            <p className="text-xs text-gray-600 mt-1">incl. 20 min buffer</p>
+          </div>
+        ) : (
+          <div className="card text-center">
+            <p className="text-4xl font-black text-brand-cyan mb-1">~{quote.drivingMinutes}</p>
+            <p className="text-xs text-gray-400 uppercase tracking-widest">min drive</p>
+          </div>
+        )}
         <div className="card text-center">
           <p className="text-4xl font-black text-white mb-1">{quote.distanceMiles.toFixed(1)}</p>
           <p className="text-xs text-gray-400 uppercase tracking-widest">miles</p>
