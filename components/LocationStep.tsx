@@ -45,20 +45,31 @@ export default function LocationStep({ onNext }: Props) {
   }, []);
 
   // Attach Places Autocomplete
+  // Wrapped defensively: if the Maps API key is rejected (e.g. referrer
+  // restrictions misconfigured for this domain), Google's SDK throws
+  // synchronously here. Without the try/catch, that uncaught exception
+  // crashes the whole page to Next.js's error boundary — even though
+  // manual address entry would otherwise still work fine.
   useEffect(() => {
-    if (!mapsReady || !inputRef.current || !window.google) return;
-    autocomplete.current = new window.google.maps.places.Autocomplete(inputRef.current, {
-      componentRestrictions: { country: 'us' },
-      fields: ['formatted_address', 'geometry'],
-    });
-    autocomplete.current.addListener('place_changed', () => {
-      const place = autocomplete.current?.getPlace();
-      if (place?.formatted_address) setAddress(place.formatted_address);
-      if (place?.geometry?.location) {
-        latRef.current = place.geometry.location.lat();
-        lngRef.current = place.geometry.location.lng();
-      }
-    });
+    if (!mapsReady || !inputRef.current || !window.google?.maps?.places) return;
+    try {
+      autocomplete.current = new window.google.maps.places.Autocomplete(inputRef.current, {
+        componentRestrictions: { country: 'us' },
+        fields: ['formatted_address', 'geometry'],
+      });
+      autocomplete.current.addListener('place_changed', () => {
+        const place = autocomplete.current?.getPlace();
+        if (place?.formatted_address) setAddress(place.formatted_address);
+        if (place?.geometry?.location) {
+          latRef.current = place.geometry.location.lat();
+          lngRef.current = place.geometry.location.lng();
+        }
+      });
+    } catch (err) {
+      // Autocomplete unavailable (e.g. blocked API key) — fall back to
+      // plain manual text entry, which still works via handleSubmit.
+      setGeoError('Address autocomplete is unavailable right now. You can still type your address manually.');
+    }
   }, [mapsReady]);
 
   // Use device location → reverse geocode via Maps JS Geocoder
