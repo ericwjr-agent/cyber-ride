@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import type { LocationData } from '@/lib/types';
+import { geolocateUser } from '@/lib/geolocation';
 
 declare global {
   interface Window {
@@ -39,6 +40,7 @@ export default function LocationStep({ onNext }: Props) {
     script.id    = 'google-maps-script';
     script.src   = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places,geometry&callback=initGoogleMaps`;
     script.async = true;
+    script.onerror = () => setGeoError('Could not load Google Maps. Please enter your address manually.');
     document.head.appendChild(script);
   }, []);
 
@@ -60,40 +62,32 @@ export default function LocationStep({ onNext }: Props) {
   }, [mapsReady]);
 
   // Use device location → reverse geocode via Maps JS Geocoder
-  const handleGeolocate = useCallback(() => {
+  const handleGeolocate = async () => {
     setGeoError('');
     if (!navigator.geolocation) {
       setGeoError('Geolocation not supported by your browser.');
       return;
     }
     setLoading(true);
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const { latitude, longitude } = pos.coords;
-        latRef.current = latitude;
-        lngRef.current = longitude;
+    try {
+      const geocoder = window.google?.maps
+        ? new window.google.maps.Geocoder()
+        : undefined;
 
-        if (!window.google) {
-          setAddress(`${latitude.toFixed(5)}, ${longitude.toFixed(5)}`);
-          setLoading(false);
-          return;
-        }
-        const geocoder = new window.google.maps.Geocoder();
-        geocoder.geocode({ location: { lat: latitude, lng: longitude } }, (results, status) => {
-          setLoading(false);
-          if (status === 'OK' && results?.[0]) {
-            setAddress(results[0].formatted_address);
-          } else {
-            setAddress(`${latitude.toFixed(5)}, ${longitude.toFixed(5)}`);
-          }
-        });
-      },
-      () => {
-        setGeoError('Location access denied. Please enter your address manually.');
-        setLoading(false);
-      }
-    );
-  }, []);
+      const result = await geolocateUser(
+        (success, error) => navigator.geolocation.getCurrentPosition(success, error),
+        geocoder as any,
+      );
+
+      latRef.current = result.coords.lat;
+      lngRef.current = result.coords.lng;
+      setAddress(result.address);
+    } catch (err) {
+      setGeoError(err instanceof Error ? err.message : 'Could not get your location. Please enter your address manually.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
