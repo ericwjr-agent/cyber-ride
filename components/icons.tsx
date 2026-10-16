@@ -100,3 +100,15 @@ export const IconBolt = (props: IconProps) => (
     <path strokeLinecap="round" strokeLinejoin="round" d="M13 2L4 14h7l-1 8 9-12h-7l1-8z" />
   </svg>
 );
+
+export const IconCybertruck = (props: IconProps) => (
+  <svg {...base(props)} viewBox="0 0 28 24">
+    {/* Cybertruck side silhouette */}
+    <path strokeLinecap="round" strokeLinejoin="round" d="M2 18h24M3 18l1.5-3h6L9 7l9-3 6 8v6M26 18l-1.5-3" />
+    {/* Windshield line */}
+    <path strokeLinecap="round" strokeLinejoin="round" d="M18 4l-3 8h6" />
+    {/* Wheels */}
+    <circle cx="7" cy="19" r="2.2" fill="currentColor" stroke="none" />
+    <circle cx="21" cy="19" r="2.2" fill="currentColor" stroke="none" />
+  </svg>
+);
