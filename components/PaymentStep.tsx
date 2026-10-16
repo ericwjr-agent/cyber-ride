@@ -49,23 +49,31 @@ export default function PaymentStep({ trip, quote, contact, onSuccess, onBack }:
       const result = await res.json();
       if (!res.ok || result.error) throw new Error(result.error ?? 'Payment capture failed');
 
-      // Send confirmation emails
-      fetch('/api/bookings/notify', {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          customerName:    contact.name,
-          customerEmail:   contact.email,
-          customerPhone:   contact.phone,
-          flightNumber:    contact.flightNumber,
-          pickupAddress:   trip.pickup.address,
-          destinationAddress: trip.destination.address,
-          scheduleLabel,
-          etaMinutes:      quote.etaMinutes,
-          distanceMiles:   quote.distanceMiles,
-          totalCents:      quote.priceCents,
-        }),
-      }).catch(console.warn);
+      // Send confirmation emails (await so errors surface)
+      try {
+        const emailRes = await fetch('/api/bookings/notify/', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            customerName:    contact.name,
+            customerEmail:   contact.email,
+            customerPhone:   contact.phone,
+            flightNumber:    contact.flightNumber,
+            pickupAddress:   trip.pickup.address,
+            destinationAddress: trip.destination.address,
+            scheduleLabel,
+            etaMinutes:      quote.etaMinutes,
+            distanceMiles:   quote.distanceMiles,
+            totalCents:      quote.priceCents,
+          }),
+        });
+        if (!emailRes.ok) {
+          const emailErr = await emailRes.json().catch(() => ({}));
+          console.error('Booking email send failed:', emailErr);
+        }
+      } catch (emailError) {
+        console.error('Booking email fetch error:', emailError);
+      }
 
       onSuccess();
     } catch (err: any) {

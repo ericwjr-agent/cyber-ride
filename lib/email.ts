@@ -24,14 +24,23 @@ export interface BookingEmailData {
 
 /* ── Send both emails in parallel ─────────────────────────────── */
 export async function sendBookingEmails(data: BookingEmailData) {
+  if (!process.env.RESEND_API_KEY) {
+    throw new Error('RESEND_API_KEY is not set — cannot send booking emails');
+  }
+
   const sends = [sendCustomerConfirmation(data)];
   if (getHostEmail()) sends.push(sendHostAlert(data));
+
   const results = await Promise.allSettled(sends);
-  results.forEach((r, i) => {
-    if (r.status === 'rejected') {
-      console.error(`Email send ${i} failed:`, r.reason);
-    }
-  });
+  const failures = results.filter((r) => r.status === 'rejected');
+
+  if (failures.length > 0) {
+    failures.forEach((r, i) => {
+      const rejected = r as PromiseRejectedResult;
+      console.error(`Email send ${i} failed:`, rejected.reason);
+    });
+    throw new Error(`${failures.length} of ${results.length} email(s) failed to send`);
+  }
 }
 
 /* ── Host alert ────────────────────────────────────────────────── */
