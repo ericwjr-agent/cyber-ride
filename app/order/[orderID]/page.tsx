@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { IconCybertruck, IconCheck } from '@/components/icons';
+import { IconCheck } from '@/components/icons';
 import { formatUSD } from '@/lib/pricing';
 
 const PAYPAL_API = process.env.PAYPAL_ENV === 'sandbox'
@@ -44,7 +44,6 @@ export default async function OrderPage({ params }: { params: { orderID: string 
       {/* Nav */}
       <nav className="flex items-center justify-between px-6 py-5 border-b border-brand-border/60">
         <Link href="/" className="flex items-center gap-3">
-          <IconCybertruck className="w-6 h-5 text-brand-gold" />
           <span className="brand-wordmark text-sm">
             <span className="text-white">CYBER </span>
             <span className="text-brand-gold">RIDE</span>

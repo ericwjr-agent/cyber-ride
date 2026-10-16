@@ -121,14 +121,6 @@ function customerConfirmationHtml(d: BookingEmailData): string {
   return base(`
     <!-- Hero -->
     <div style="text-align:center;margin-bottom:36px;">
-      <div style="margin-bottom:16px;line-height:1;">
-        <svg width="56" height="34" viewBox="0 0 100 60" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:inline-block;">
-          <path d="M2 26 L5 21 L24 21 L45 6 L51 6 L64 12 L66 21 L97 24 L98 34 L92 37 L88 37 L49 44 L26 37 L5 37 L2 37 Z" stroke="#c5a572" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M24 21 L45 6 L51 6 L64 12 L66 21" stroke="#c5a572" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-          <circle cx="17" cy="44" r="8" fill="#c5a572"/>
-          <circle cx="81" cy="44" r="8" fill="#c5a572"/>
-        </svg>
-      </div>
       <h1 style="font-family:${FONT_STACK_DISPLAY};margin:0 0 10px;font-size:28px;font-weight:500;color:#ffffff;letter-spacing:-0.02em;">
         You're booked, ${d.customerName}
       </h1>

@@ -1,6 +1,5 @@
 import BookingFlow from '@/components/BookingFlow';
 import Link from 'next/link';
-import { IconCybertruck } from '@/components/icons';
 
 export const metadata = {
   title: 'Book Your Ride — Cyber Ride',
@@ -12,7 +11,6 @@ export default function BookPage() {
       {/* Nav */}
       <nav className="flex items-center justify-between px-6 py-5 border-b border-brand-border/60">
         <Link href="/" className="flex items-center gap-3">
-          <IconCybertruck className="w-6 h-5 text-brand-gold" />
           <span className="brand-wordmark text-sm">
             <span className="text-white">CYBER </span>
             <span className="text-brand-gold">RIDE</span>

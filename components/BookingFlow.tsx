@@ -8,7 +8,7 @@ import ContactStep  from './ContactStep';
 import PaymentStep  from './PaymentStep';
 import { formatScheduleLabel } from '@/lib/trip';
 import { formatUSD } from '@/lib/pricing';
-import { IconCybertruck, IconCheck, IconPhone } from '@/components/icons';
+import { IconCheck, IconPhone } from '@/components/icons';
 import type { BookingStep, TripData, QuoteData, ContactInfo } from '@/lib/types';
 
 const STEPS: { key: BookingStep; label: string }[] = [

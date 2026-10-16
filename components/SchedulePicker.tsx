@@ -2,7 +2,7 @@
 
 import type { ScheduleData } from '@/lib/types';
 import { ASAP_WAIT_MINUTES } from '@/lib/trip';
-import { IconCybertruck, IconClock } from '@/components/icons';
+import { IconClock } from '@/components/icons';
 
 interface Props {
   value: ScheduleData;
@@ -30,7 +30,6 @@ export default function SchedulePicker({ value, onChange }: Props) {
               : 'border-brand-border text-gray-500 hover:border-brand-gold/20 hover:text-gray-300'
           }`}
         >
-          <IconCybertruck className="w-5 h-4" />
           Right Now
         </button>
         <button

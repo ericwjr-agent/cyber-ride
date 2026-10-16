@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { formatUSD, BASE_PRICE_CENTS, PER_MILE_CENTS } from '@/lib/pricing';
 import {
   IconLuggage, IconSeat, IconScreen, IconCar, IconArrow, IconChevronDown,
-  IconPhone, IconMail, IconCybertruck, IconLocation, IconClock, IconCard,
+  IconPhone, IconMail, IconLocation, IconClock, IconCard,
 } from '@/components/icons';
 
 export default function HomePage() {
@@ -15,7 +15,6 @@ export default function HomePage() {
       <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-5
                       bg-brand-dark/90 backdrop-blur-md border-b border-brand-border/60">
         <div className="flex items-center gap-3">
-          <IconCybertruck className="w-6 h-5 text-brand-gold" />
           <div className="brand-wordmark text-sm leading-none flex flex-col items-start">
             <span className="text-white">CYBER</span>
             <span className="text-brand-gold mt-0.5">RIDE</span>
@@ -193,7 +192,6 @@ export default function HomePage() {
       {/* Footer */}
       <footer className="py-12 px-6 border-t border-brand-border/40 text-center text-gray-500 text-sm">
         <div className="flex items-center justify-center gap-2.5 mb-4">
-          <IconCybertruck className="w-5 h-4 text-brand-gold" />
           <span className="brand-wordmark text-sm text-white">CYBER RIDE</span>
         </div>
         <p className="text-gray-600">Airport Rides · Atlanta Metro Area</p>
