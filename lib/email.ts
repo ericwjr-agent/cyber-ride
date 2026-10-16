@@ -49,7 +49,7 @@ async function sendHostAlert(data: BookingEmailData) {
     from:     getFrom(),
     to:       getHostEmail(),
     replyTo:  'Eric@nativelab.co',
-    subject:  `🚨 New Ride Booking — ${data.customerName} · Flight ${data.flightNumber}`,
+    subject:  `New Ride Booking — ${data.customerName}${data.flightNumber ? ` · Flight ${data.flightNumber}` : ''}`,
     html:     hostAlertHtml(data),
   });
 }
@@ -60,92 +60,111 @@ async function sendCustomerConfirmation(data: BookingEmailData) {
     from:     getFrom(),
     to:       data.customerEmail,
     replyTo:  'Eric@nativelab.co',
-    subject:  `⚡ Your Cyber Ride is booked, ${data.customerName}!`,
+    subject:  `Your Cyber Ride is booked, ${data.customerName}`,
     html:     customerConfirmationHtml(data),
   });
 }
 
 /* ════════════════════════════════════════════════════════════════
-   EMAIL TEMPLATES
+   DESIGN SYSTEM (mirrors website)
+   ── Gold:      #c5a572
+   ── Dark:      #0a0a0c
+   ── Surface:   #141416
+   ── Border:    #232328
+   ── Muted:     #1a1a1d
+   ── Display:   Space Grotesk
+   ── Body:      Inter
    ════════════════════════════════════════════════════════════════ */
+
+const FONT_STACK_DISPLAY = "'Space Grotesk', 'Inter', -apple-system, sans-serif";
+const FONT_STACK_BODY    = "'Inter', -apple-system, sans-serif";
 
 function base(content: string) {
   return `<!DOCTYPE html>
 <html lang="en">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
-<body style="margin:0;padding:0;background:#0a0a0f;font-family:Inter,-apple-system,sans-serif;color:#ffffff;">
-  <div style="max-width:540px;margin:0 auto;padding:40px 24px;">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body style="margin:0;padding:0;background:#0a0a0c;font-family:${FONT_STACK_BODY};color:#e5e5e7;">
+  <div style="max-width:560px;margin:0 auto;padding:40px 24px;">
 
-    <!-- Logo -->
-    <div style="text-align:center;margin-bottom:36px;">
-      <span style="font-size:26px;font-weight:900;letter-spacing:0.1em;text-transform:uppercase;">
-        CYBER&nbsp;<span style="color:#00d4ff;">RIDE</span>
+    <!-- Wordmark -->
+    <div style="text-align:center;margin-bottom:40px;">
+      <span style="font-family:${FONT_STACK_DISPLAY};font-size:24px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:#ffffff;">
+        CYBER&nbsp;<span style="color:#c5a572;">RIDE</span>
       </span>
     </div>
 
     ${content}
 
     <!-- Footer -->
-    <div style="text-align:center;color:#4b5563;font-size:12px;border-top:1px solid #1f2937;padding-top:24px;margin-top:40px;">
-      <p style="margin:0 0 4px;">Cyber Ride · Airport Rides in a Cybertruck · Atlanta</p>
+    <div style="text-align:center;color:#555;font-size:12px;border-top:1px solid #232328;padding-top:28px;margin-top:44px;">
+      <p style="margin:0 0 6px;font-family:${FONT_STACK_DISPLAY};font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#666;">Cyber Ride</p>
+      <p style="margin:0;color:#444;">Airport Rides in a Cybertruck · Atlanta</p>
     </div>
   </div>
 </body>
 </html>`;
 }
 
+/* ── Shared card style ─────────────────────────────────────────── */
+const CARD = "background:#141416;border:1px solid #232328;border-radius:16px;padding:28px;margin-bottom:20px;";
+const LABEL = "font-family:${FONT_STACK_DISPLAY};font-size:10px;text-transform:uppercase;letter-spacing:0.2em;color:#666;margin:0 0 18px;";
+const ROW_LABEL = "padding:7px 0;color:#888;font-size:14px;";
+const ROW_VALUE = "text-align:right;color:#e5e5e7;font-size:14px;font-weight:500;";
+
 /* ── Customer confirmation template ────────────────────────────── */
 function customerConfirmationHtml(d: BookingEmailData): string {
   return base(`
     <!-- Hero -->
-    <div style="text-align:center;margin-bottom:32px;">
-      <div style="font-size:60px;margin-bottom:12px;">⚡</div>
-      <h1 style="margin:0 0 8px;font-size:26px;font-weight:800;color:#ffffff;">
-        You're booked, ${d.customerName}!
+    <div style="text-align:center;margin-bottom:36px;">
+      <div style="font-size:48px;margin-bottom:16px;line-height:1;">⚡</div>
+      <h1 style="font-family:${FONT_STACK_DISPLAY};margin:0 0 10px;font-size:28px;font-weight:500;color:#ffffff;letter-spacing:-0.02em;">
+        You're booked, ${d.customerName}
       </h1>
-      <p style="margin:0;color:#9ca3af;font-size:15px;">
+      <p style="margin:0;color:#888;font-size:15px;font-weight:300;">
         Your Cybertruck ride from the airport is confirmed.
       </p>
     </div>
 
     <!-- Booking summary -->
-    <div style="background:#111827;border:1px solid #1f2937;border-radius:16px;padding:24px;margin-bottom:24px;">
-      <p style="margin:0 0 16px;font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:#6b7280;">
-        Booking Summary
-      </p>
-      <table style="width:100%;border-collapse:collapse;font-size:14px;">
+    <div style="${CARD}">
+      <p style="${LABEL}">Booking Summary</p>
+      <table style="width:100%;border-collapse:collapse;">
         <tr>
-          <td style="padding:6px 0;color:#9ca3af;">Pickup</td>
-          <td style="text-align:right;color:#fff;">${d.pickupAddress}</td>
+          <td style="${ROW_LABEL}">Pickup</td>
+          <td style="${ROW_VALUE}">${d.pickupAddress}</td>
         </tr>
         <tr>
-          <td style="padding:6px 0;color:#9ca3af;">Destination</td>
-          <td style="text-align:right;color:#fff;">${d.destinationAddress}</td>
+          <td style="${ROW_LABEL}">Destination</td>
+          <td style="${ROW_VALUE}">${d.destinationAddress}</td>
         </tr>
         ${d.flightNumber ? `<tr>
-          <td style="padding:6px 0;color:#9ca3af;">Flight Number</td>
-          <td style="text-align:right;color:#fff;">${d.flightNumber}</td>
+          <td style="${ROW_LABEL}">Flight</td>
+          <td style="${ROW_VALUE}">${d.flightNumber}</td>
         </tr>` : ''}
         <tr>
-          <td style="padding:6px 0;color:#9ca3af;">Pickup Time</td>
-          <td style="text-align:right;color:#fff;">${d.scheduleLabel}</td>
+          <td style="${ROW_LABEL}">Pickup Time</td>
+          <td style="${ROW_VALUE}">${d.scheduleLabel}</td>
         </tr>
         <tr>
-          <td style="padding:6px 0;color:#9ca3af;">Distance</td>
-          <td style="text-align:right;color:#fff;">${d.distanceMiles} mi · ETA ~${d.etaMinutes} min</td>
+          <td style="${ROW_LABEL}">Distance</td>
+          <td style="${ROW_VALUE}">${d.distanceMiles} mi · ETA ~${d.etaMinutes} min</td>
         </tr>
         <tr>
-          <td style="padding:6px 0;color:#9ca3af;">Total Paid</td>
-          <td style="text-align:right;color:#00d4ff;font-weight:600;">${formatUSD(d.totalCents)}</td>
+          <td style="padding:12px 0 0;border-top:1px solid #232328;color:#888;font-size:14px;">Total Paid</td>
+          <td style="text-align:right;padding:12px 0 0;border-top:1px solid #232328;color:#c5a572;font-size:18px;font-weight:600;font-family:${FONT_STACK_DISPLAY};">${formatUSD(d.totalCents)}</td>
         </tr>
       </table>
     </div>
 
     <!-- What's next -->
-    <div style="background:#0f172a;border:1px solid #1e3a5f;border-radius:12px;padding:16px;margin-bottom:32px;">
-      <p style="margin:0 0 6px;font-weight:600;font-size:14px;">📱 What happens next</p>
-      <p style="margin:0;color:#93c5fd;font-size:13px;">
-        Your driver will text <strong>${d.customerPhone}</strong> with their live location before pickup.
+    <div style="background:#1a1a1d;border:1px solid #232328;border-radius:12px;padding:20px;margin-bottom:32px;">
+      <p style="margin:0 0 8px;font-family:${FONT_STACK_DISPLAY};font-weight:500;font-size:13px;color:#c5a572;text-transform:uppercase;letter-spacing:0.15em;">What happens next</p>
+      <p style="margin:0;color:#999;font-size:14px;line-height:1.6;font-weight:300;">
+        Your driver will text <strong style="color:#e5e5e7;font-weight:600;">${d.customerPhone}</strong> with their live location before pickup.
       </p>
     </div>
   `);
@@ -155,39 +174,33 @@ function customerConfirmationHtml(d: BookingEmailData): string {
 function hostAlertHtml(d: BookingEmailData): string {
   return base(`
     <!-- Alert header -->
-    <div style="background:#111827;border:1px solid #374151;border-radius:16px;padding:24px;margin-bottom:24px;">
-      <p style="margin:0 0 4px;font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:#6b7280;">
-        New Booking
-      </p>
-      <h2 style="margin:8px 0 0;font-size:20px;font-weight:800;">${d.customerName}</h2>
-      <p style="margin:4px 0 0;color:#9ca3af;font-size:14px;">${d.bookingTime}</p>
+    <div style="${CARD}">
+      <p style="font-family:${FONT_STACK_DISPLAY};margin:0 0 6px;font-size:10px;text-transform:uppercase;letter-spacing:0.2em;color:#c5a572;">New Booking</p>
+      <h2 style="font-family:${FONT_STACK_DISPLAY};margin:10px 0 4px;font-size:22px;font-weight:500;color:#ffffff;letter-spacing:-0.01em;">${d.customerName}</h2>
+      <p style="margin:0;color:#666;font-size:13px;">${d.bookingTime}</p>
     </div>
 
     <!-- Customer details -->
-    <div style="background:#111827;border:1px solid #1f2937;border-radius:16px;padding:24px;margin-bottom:16px;">
-      <p style="margin:0 0 14px;font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:#6b7280;">
-        Customer
-      </p>
-      <table style="width:100%;border-collapse:collapse;font-size:14px;">
-        <tr><td style="padding:5px 0;color:#9ca3af;width:120px;">Phone</td><td style="color:#fff;">${d.customerPhone}</td></tr>
-        <tr><td style="padding:5px 0;color:#9ca3af;">Email</td><td style="color:#fff;">${d.customerEmail}</td></tr>
-        ${d.flightNumber ? `<tr><td style="padding:5px 0;color:#9ca3af;">Flight</td><td style="color:#fff;">${d.flightNumber}</td></tr>` : ''}
-        <tr><td style="padding:5px 0;color:#9ca3af;">Pickup Time</td><td style="color:#fff;">${d.scheduleLabel}</td></tr>
-        <tr><td style="padding:5px 0;color:#9ca3af;">Pickup</td><td style="color:#fff;">${d.pickupAddress}</td></tr>
-        <tr><td style="padding:5px 0;color:#9ca3af;">Destination</td><td style="color:#fff;">${d.destinationAddress}</td></tr>
-        <tr><td style="padding:5px 0;color:#9ca3af;">Distance</td><td style="color:#fff;">${d.distanceMiles} mi · ETA ~${d.etaMinutes} min</td></tr>
+    <div style="${CARD}">
+      <p style="${LABEL}">Customer</p>
+      <table style="width:100%;border-collapse:collapse;">
+        <tr><td style="${ROW_LABEL}width:120px;">Phone</td><td style="${ROW_VALUE}">${d.customerPhone}</td></tr>
+        <tr><td style="${ROW_LABEL}">Email</td><td style="${ROW_VALUE}">${d.customerEmail}</td></tr>
+        ${d.flightNumber ? `<tr><td style="${ROW_LABEL}">Flight</td><td style="${ROW_VALUE}">${d.flightNumber}</td></tr>` : ''}
+        <tr><td style="${ROW_LABEL}">Pickup Time</td><td style="${ROW_VALUE}">${d.scheduleLabel}</td></tr>
+        <tr><td style="${ROW_LABEL}">Pickup</td><td style="${ROW_VALUE}">${d.pickupAddress}</td></tr>
+        <tr><td style="${ROW_LABEL}">Destination</td><td style="${ROW_VALUE}">${d.destinationAddress}</td></tr>
+        <tr><td style="${ROW_LABEL}">Distance</td><td style="${ROW_VALUE}">${d.distanceMiles} mi · ETA ~${d.etaMinutes} min</td></tr>
       </table>
     </div>
 
     <!-- Financials -->
-    <div style="background:#111827;border:1px solid #1f2937;border-radius:16px;padding:24px;margin-bottom:24px;">
-      <p style="margin:0 0 14px;font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:#6b7280;">
-        Financials
-      </p>
-      <table style="width:100%;border-collapse:collapse;font-size:14px;">
+    <div style="${CARD}">
+      <p style="${LABEL}">Financials</p>
+      <table style="width:100%;border-collapse:collapse;">
         <tr>
-          <td style="padding:6px 0;color:#9ca3af;">Total Paid</td>
-          <td style="text-align:right;color:#00d4ff;font-weight:700;">${formatUSD(d.totalCents)}</td>
+          <td style="padding:8px 0;color:#888;font-size:14px;">Total Paid</td>
+          <td style="text-align:right;color:#c5a572;font-size:20px;font-weight:600;font-family:${FONT_STACK_DISPLAY};">${formatUSD(d.totalCents)}</td>
         </tr>
       </table>
     </div>
