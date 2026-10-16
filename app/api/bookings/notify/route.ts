@@ -12,6 +12,7 @@ export async function POST(request: Request) {
       pickupAddress, destinationAddress, scheduleLabel,
       etaMinutes, distanceMiles,
       totalCents,
+      orderId,
     } = body;
 
     const bookingTime = new Date().toLocaleString('en-US', {
@@ -32,6 +33,7 @@ export async function POST(request: Request) {
       distanceMiles,
       totalCents,
       bookingTime,
+      orderId: orderId ?? '',
     };
 
     await sendBookingEmails(emailData);

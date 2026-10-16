@@ -65,6 +65,7 @@ export default function PaymentStep({ trip, quote, contact, onSuccess, onBack }:
             etaMinutes:      quote.etaMinutes,
             distanceMiles:   quote.distanceMiles,
             totalCents:      quote.priceCents,
+            orderId:         data.orderID,
           }),
         });
         if (!emailRes.ok) {

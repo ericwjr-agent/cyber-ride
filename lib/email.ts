@@ -20,6 +20,7 @@ export interface BookingEmailData {
   distanceMiles:  number;
   totalCents:     number;
   bookingTime:    string;
+  orderId:        string;
 }
 
 /* ── Send both emails in parallel ─────────────────────────────── */
@@ -121,11 +122,11 @@ function customerConfirmationHtml(d: BookingEmailData): string {
     <!-- Hero -->
     <div style="text-align:center;margin-bottom:36px;">
       <div style="margin-bottom:16px;line-height:1;">
-        <svg width="48" height="36" viewBox="0 0 32 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:inline-block;">
-          <path d="M3 19 L3 16 L8 16 L14 4 L20 5 L24 16 L29 16 L29 19" stroke="#c5a572" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M24 16 L20 16 L18 10" stroke="#c5a572" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-          <circle cx="9" cy="19" r="2.5" fill="#c5a572"/>
-          <circle cx="23" cy="19" r="2.5" fill="#c5a572"/>
+        <svg width="56" height="34" viewBox="0 0 100 60" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:inline-block;">
+          <path d="M2 26 L5 21 L24 21 L45 6 L51 6 L64 12 L66 21 L97 24 L98 34 L92 37 L88 37 L49 44 L26 37 L5 37 L2 37 Z" stroke="#c5a572" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M24 21 L45 6 L51 6 L64 12 L66 21" stroke="#c5a572" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="17" cy="44" r="8" fill="#c5a572"/>
+          <circle cx="81" cy="44" r="8" fill="#c5a572"/>
         </svg>
       </div>
       <h1 style="font-family:${FONT_STACK_DISPLAY};margin:0 0 10px;font-size:28px;font-weight:500;color:#ffffff;letter-spacing:-0.02em;">
@@ -168,12 +169,18 @@ function customerConfirmationHtml(d: BookingEmailData): string {
     </div>
 
     <!-- What's next -->
-    <div style="background:#1a1a1d;border:1px solid #232328;border-radius:12px;padding:20px;margin-bottom:32px;">
+    <div style="background:#1a1a1d;border:1px solid #232328;border-radius:12px;padding:20px;margin-bottom:20px;">
       <p style="margin:0 0 8px;font-family:${FONT_STACK_DISPLAY};font-weight:500;font-size:13px;color:#c5a572;text-transform:uppercase;letter-spacing:0.15em;">What happens next</p>
       <p style="margin:0;color:#999;font-size:14px;line-height:1.6;font-weight:300;">
         Your driver will text <strong style="color:#e5e5e7;font-weight:600;">${d.customerPhone}</strong> with their live location before pickup.
       </p>
     </div>
+
+    <!-- View booking link -->
+    <a href="https://cyberpicksupatl.com/order/${d.orderId}"
+       style="display:block;text-align:center;background:#c5a572;color:#0a0a0c;font-family:${FONT_STACK_DISPLAY};font-weight:600;font-size:14px;text-transform:uppercase;letter-spacing:0.1em;padding:16px 24px;border-radius:10px;text-decoration:none;margin-bottom:32px;">
+      View Your Booking
+    </a>
   `);
 }
 

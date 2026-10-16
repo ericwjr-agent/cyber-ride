@@ -102,22 +102,21 @@ export const IconBolt = (props: IconProps) => (
 );
 
 export const IconCybertruck = (props: IconProps) => (
-  <svg {...base(props)} viewBox="0 0 32 24">
-    {/* Cybertruck side profile — angular wedge shape */}
-    {/* Roof line: front nose → windshield → roof → rear window → bed */}
+  <svg {...base(props)} viewBox="0 0 100 60">
+    {/* Cybertruck side silhouette */}
     <path
       strokeLinecap="round"
       strokeLinejoin="round"
-      d="M3 19 L3 16 L8 16 L14 4 L20 5 L24 16 L29 16 L29 19"
+      d="M2 26 L5 21 L24 21 L45 6 L51 6 L64 12 L66 21 L97 24 L98 34 L92 37 L88 37 L49 44 L26 37 L5 37 L2 37 Z"
     />
-    {/* Bed line */}
+    {/* Window line */}
     <path
       strokeLinecap="round"
       strokeLinejoin="round"
-      d="M24 16 L20 16 L18 10"
+      d="M24 21 L45 6 L51 6 L64 12 L66 21"
     />
     {/* Wheels */}
-    <circle cx="9" cy="19" r="2.5" fill="currentColor" stroke="none" />
-    <circle cx="23" cy="19" r="2.5" fill="currentColor" stroke="none" />
+    <circle cx="17" cy="44" r="8" fill="currentColor" stroke="none" />
+    <circle cx="81" cy="44" r="8" fill="currentColor" stroke="none" />
   </svg>
 );
