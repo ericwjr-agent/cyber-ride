@@ -2,6 +2,7 @@
 
 import type { ScheduleData } from '@/lib/types';
 import { ASAP_WAIT_MINUTES } from '@/lib/trip';
+import { IconBolt, IconClock } from '@/components/icons';
 
 interface Props {
   value: ScheduleData;
@@ -17,36 +18,38 @@ function nowLocalDatetimeString(): string {
 export default function SchedulePicker({ value, onChange }: Props) {
   return (
     <div className="space-y-3">
-      <label className="block text-sm font-medium text-gray-300">When do you need pickup?</label>
+      <label className="block text-sm font-medium text-gray-400">When do you need pickup?</label>
 
       <div className="grid grid-cols-2 gap-2">
         <button
           type="button"
           onClick={() => onChange({ mode: 'now' })}
-          className={`py-2.5 rounded-xl text-sm font-medium border transition-colors ${
+          className={`flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium border transition-all duration-300 ${
             value.mode === 'now'
-              ? 'border-brand-cyan text-brand-cyan bg-brand-cyan/10'
-              : 'border-gray-700 text-gray-400 hover:border-gray-600'
+              ? 'border-brand-gold/40 text-brand-gold bg-brand-gold/5'
+              : 'border-brand-border text-gray-500 hover:border-brand-gold/20 hover:text-gray-300'
           }`}
         >
-          ⚡ Right Now
+          <IconBolt className="w-4 h-4" />
+          Right Now
         </button>
         <button
           type="button"
           onClick={() => onChange({ mode: 'scheduled', dateTime: value.dateTime ?? '' })}
-          className={`py-2.5 rounded-xl text-sm font-medium border transition-colors ${
+          className={`flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium border transition-all duration-300 ${
             value.mode === 'scheduled'
-              ? 'border-brand-cyan text-brand-cyan bg-brand-cyan/10'
-              : 'border-gray-700 text-gray-400 hover:border-gray-600'
+              ? 'border-brand-gold/40 text-brand-gold bg-brand-gold/5'
+              : 'border-brand-border text-gray-500 hover:border-brand-gold/20 hover:text-gray-300'
           }`}
         >
-          📅 Schedule Ahead
+          <IconClock className="w-4 h-4" />
+          Schedule Ahead
         </button>
       </div>
 
       {value.mode === 'now' ? (
-        <p className="text-xs text-gray-500">
-          We&apos;ll dispatch a driver right away. Estimated wait: <span className="text-brand-cyan">~{ASAP_WAIT_MINUTES} minutes</span>.
+        <p className="text-xs text-gray-600">
+          We&#39;ll dispatch a driver right away. Estimated wait: <span className="text-brand-gold">~{ASAP_WAIT_MINUTES} minutes</span>.
         </p>
       ) : (
         <div>
@@ -57,7 +60,7 @@ export default function SchedulePicker({ value, onChange }: Props) {
             onChange={(e) => onChange({ mode: 'scheduled', dateTime: e.target.value })}
             className="input-brand"
           />
-          <p className="text-xs text-gray-600 mt-1">Choose when you&apos;d like to be picked up.</p>
+          <p className="text-xs text-gray-600 mt-1.5">Choose when you&#39;d like to be picked up.</p>
         </div>
       )}
     </div>

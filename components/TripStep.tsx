@@ -6,6 +6,7 @@ import { validateTripEndpoints, validateSchedule } from '@/lib/trip';
 import { AIRPORT_TERMINALS } from '@/lib/airport';
 import EndpointPicker from './EndpointPicker';
 import SchedulePicker from './SchedulePicker';
+import { IconArrow } from '@/components/icons';
 
 declare global {
   interface Window {
@@ -75,7 +76,7 @@ export default function TripStep({ onNext, initial }: Props) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-8">
+    <form onSubmit={handleSubmit} className="space-y-8 animate-fade-up">
       <EndpointPicker
         label="Pickup Location"
         value={pickup}
@@ -98,9 +99,7 @@ export default function TripStep({ onNext, initial }: Props) {
 
       <button type="submit" className="btn-primary w-full flex items-center justify-center gap-2">
         Get My Quote
-        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-        </svg>
+        <IconArrow className="w-4 h-4" />
       </button>
     </form>
   );

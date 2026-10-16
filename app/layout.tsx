@@ -6,7 +6,7 @@ import './globals.css';
 export const metadata: Metadata = {
   title: 'Cyber Ride — Airport Rides in a Cybertruck',
   description:
-    'Premium airport rides powered by Cybertruck. Book your ride from the airport with transparent pricing.',
+    'Premium airport pickup powered by Tesla Cybertruck. Transparent pricing, booked in minutes.',
   keywords: ['airport ride', 'Cybertruck', 'airport transfer', 'Atlanta airport', 'ride booking'],
   openGraph: {
     title: 'Cyber Ride — Airport Rides in a Cybertruck',
@@ -16,7 +16,10 @@ export const metadata: Metadata = {
   icons: {
     icon: '/favicon.svg',
   },
-  themeColor: '#00d4ff',
+};
+
+export const viewport = {
+  themeColor: '#0a0a0c',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

@@ -45,21 +45,21 @@ export default function ContactStep({ quote, onNext, onBack }: Props) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
+    <form onSubmit={handleSubmit} className="space-y-5 animate-fade-up">
       {/* Mini price reminder */}
-      <div className="flex justify-between items-center p-4 bg-gray-900 rounded-xl border border-gray-800 text-sm">
+      <div className="flex justify-between items-center p-4 bg-brand-surface rounded-xl border border-brand-border text-sm">
         <div>
-          <p className="text-gray-400">Total fare</p>
-          <p className="font-bold text-lg">{formatUSD(quote.priceCents)}</p>
+          <p className="text-gray-500 text-xs uppercase tracking-widest">Total fare</p>
+          <p className="font-semibold text-lg text-white">{formatUSD(quote.priceCents)}</p>
         </div>
         <div className="text-right">
-          <p className="text-gray-400">Payment</p>
-          <p className="font-bold text-lg text-brand-cyan">Full payment at booking</p>
+          <p className="text-gray-500 text-xs uppercase tracking-widest">Payment</p>
+          <p className="font-semibold text-brand-gold">Due at booking</p>
         </div>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-2">Full Name</label>
+        <label className="block text-sm font-medium text-gray-400 mb-2">Full Name</label>
         <input
           type="text"
           value={name}
@@ -71,7 +71,7 @@ export default function ContactStep({ quote, onNext, onBack }: Props) {
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-2">Phone Number</label>
+        <label className="block text-sm font-medium text-gray-400 mb-2">Phone Number</label>
         <input
           type="tel"
           value={phone}
@@ -80,13 +80,13 @@ export default function ContactStep({ quote, onNext, onBack }: Props) {
           className="input-brand"
           required
         />
-        <p className="text-xs text-gray-600 mt-1">
+        <p className="text-xs text-gray-600 mt-1.5">
           Your driver will text this number with their live location.
         </p>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-2">Email Address</label>
+        <label className="block text-sm font-medium text-gray-400 mb-2">Email Address</label>
         <input
           type="email"
           value={email}
@@ -95,11 +95,11 @@ export default function ContactStep({ quote, onNext, onBack }: Props) {
           className="input-brand"
           required
         />
-        <p className="text-xs text-gray-600 mt-1">Booking confirmation will be sent here.</p>
+        <p className="text-xs text-gray-600 mt-1.5">Booking confirmation will be sent here.</p>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-2">Flight Number (optional)</label>
+        <label className="block text-sm font-medium text-gray-400 mb-2">Flight Number (optional)</label>
         <input
           type="text"
           value={flightNumber}
@@ -107,7 +107,7 @@ export default function ContactStep({ quote, onNext, onBack }: Props) {
           placeholder="DL1234"
           className="input-brand"
         />
-        <p className="text-xs text-gray-600 mt-1">If flying, so we can track your arrival.</p>
+        <p className="text-xs text-gray-600 mt-1.5">If flying, so we can track your arrival.</p>
       </div>
 
       {error && (

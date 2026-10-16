@@ -1,15 +1,15 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Josefin+Sans:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --brand-cyan:   #00d4ff;
-  --brand-blue:   #0ea5e9;
-  --brand-purple: #7c3aed;
-  --brand-dark:   #0a0a0f;
-  --brand-card:   #111827;
+  --brand-gold:    #c5a572;
+  --brand-gold-dim: #9a8456;
+  --brand-dark:    #0a0a0c;
+  --brand-surface: #141416;
+  --brand-border:  #232328;
 }
 
 html {
@@ -18,81 +18,73 @@ html {
 
 body {
   background-color: var(--brand-dark);
-  color: #ffffff;
+  color: #e5e5e7;
   font-family: 'Inter', system-ui, sans-serif;
   min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* Brand wordmark */
 .brand-wordmark {
-  font-family: 'Josefin Sans', sans-serif;
-  font-weight: 700;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.14em;
 }
 
-/* Cyan glow utility */
-.glow-cyan {
-  box-shadow: 0 0 20px rgba(0, 212, 255, 0.4), 0 0 40px rgba(0, 212, 255, 0.15);
-}
-
-.glow-cyan-text {
-  text-shadow: 0 0 20px rgba(0, 212, 255, 0.6);
-}
-
-/* Grid background pattern */
-.bg-grid {
-  background-image:
-    linear-gradient(rgba(0, 212, 255, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 212, 255, 0.04) 1px, transparent 1px);
-  background-size: 50px 50px;
+/* Display heading */
+.font-display {
+  font-family: 'Space Grotesk', sans-serif;
 }
 
 /* Step indicator */
 .step-active {
-  background: linear-gradient(135deg, #00d4ff, #0ea5e9);
-  color: #000;
+  background: var(--brand-gold);
+  color: #0a0a0c;
 }
 
 .step-done {
-  background: #059669;
-  color: #fff;
+  background: #2d5a3d;
+  color: #6ee7a0;
 }
 
 .step-pending {
-  background: #1f2937;
-  color: #6b7280;
+  background: #1a1a1d;
+  color: #555;
+  border: 1px solid #2a2a2e;
 }
 
-/* Input focus ring */
+/* Input style */
 .input-brand {
-  @apply w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-3 text-white
-         placeholder-gray-500 focus:outline-none focus:border-brand-cyan focus:ring-1
-         focus:ring-brand-cyan transition-all duration-200;
+  @apply w-full bg-brand-surface border border-brand-border rounded-lg px-4 py-3 text-white
+         placeholder-gray-600 focus:outline-none focus:border-brand-gold/50 focus:ring-1
+         focus:ring-brand-gold/20 transition-all duration-300;
 }
 
 /* Card style */
 .card {
-  @apply bg-gray-900 border border-gray-800 rounded-2xl p-6;
+  @apply bg-brand-surface border border-brand-border rounded-2xl p-6;
 }
 
 /* Primary CTA button */
 .btn-primary {
-  @apply bg-brand-cyan text-black font-bold py-4 px-8 rounded-xl
-         hover:bg-sky-300 active:scale-95 transition-all duration-200
-         disabled:opacity-40 disabled:cursor-not-allowed;
+  @apply bg-brand-gold text-brand-dark font-semibold py-4 px-8 rounded-lg
+         hover:bg-brand-gold/90 active:scale-[0.98] transition-all duration-300
+         disabled:opacity-30 disabled:cursor-not-allowed;
 }
 
 /* Secondary button */
 .btn-secondary {
-  @apply border border-brand-cyan text-brand-cyan font-semibold py-4 px-8 rounded-xl
-         hover:bg-brand-cyan hover:text-black active:scale-95 transition-all duration-200;
+  @apply border border-brand-border text-gray-300 font-medium py-4 px-8 rounded-lg
+         hover:border-brand-gold/40 hover:text-white active:scale-[0.98]
+         transition-all duration-300;
 }
 
 /* Spinner */
 .spinner {
-  border: 3px solid rgba(255,255,255,0.1);
-  border-top-color: var(--brand-cyan);
+  border: 2px solid rgba(255,255,255,0.08);
+  border-top-color: var(--brand-gold);
   border-radius: 50%;
   width: 24px;
   height: 24px;

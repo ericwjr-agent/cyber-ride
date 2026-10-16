@@ -75,54 +75,54 @@ export default function PaymentStep({ trip, quote, contact, onSuccess, onBack }:
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-up">
       {/* Order summary */}
       <div className="card">
-        <h3 className="text-xs uppercase tracking-widest text-gray-500 mb-4">Order Summary</h3>
+        <h3 className="text-xs uppercase tracking-[0.2em] text-gray-600 mb-4">Order Summary</h3>
         <div className="space-y-2 text-sm mb-4">
           <div className="flex justify-between">
-            <span className="text-gray-400">Pickup</span>
-            <span className="text-right">{trip.pickup.address}</span>
+            <span className="text-gray-500">Pickup</span>
+            <span className="text-right text-gray-300">{trip.pickup.address}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-gray-400">Destination</span>
-            <span className="text-right">{trip.destination.address}</span>
+            <span className="text-gray-500">Destination</span>
+            <span className="text-right text-gray-300">{trip.destination.address}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-gray-400">Pickup Time</span>
-            <span>{scheduleLabel}</span>
+            <span className="text-gray-500">Pickup Time</span>
+            <span className="text-gray-300">{scheduleLabel}</span>
           </div>
           {contact.flightNumber && (
             <div className="flex justify-between">
-              <span className="text-gray-400">Flight</span>
-              <span>{contact.flightNumber}</span>
+              <span className="text-gray-500">Flight</span>
+              <span className="text-gray-300">{contact.flightNumber}</span>
             </div>
           )}
-          <div className="flex justify-between pt-2 border-t border-gray-700 text-lg font-bold">
-            <span>Total</span>
-            <span className="text-brand-cyan">{formatUSD(quote.priceCents)}</span>
+          <div className="flex justify-between pt-3 border-t border-brand-border text-lg font-medium">
+            <span className="text-white">Total</span>
+            <span className="text-brand-gold">{formatUSD(quote.priceCents)}</span>
           </div>
         </div>
-        <div className="space-y-1 text-xs text-gray-500 border-t border-gray-700 pt-3">
-          <p><span className="text-gray-400">Name:</span> {contact.name}</p>
-          <p><span className="text-gray-400">Phone:</span> {contact.phone}</p>
-          <p><span className="text-gray-400">Email:</span> {contact.email}</p>
+        <div className="space-y-1 text-xs text-gray-600 border-t border-brand-border pt-3">
+          <p><span className="text-gray-500">Name:</span> {contact.name}</p>
+          <p><span className="text-gray-500">Phone:</span> {contact.phone}</p>
+          <p><span className="text-gray-500">Email:</span> {contact.email}</p>
         </div>
       </div>
 
       {error && (
-        <div className="p-3 bg-red-900/20 border border-red-800/40 rounded-xl text-red-400 text-sm">{error}</div>
+        <div className="p-3 bg-red-950/30 border border-red-900/40 rounded-lg text-red-400 text-sm">{error}</div>
       )}
 
       {processing ? (
         <div className="flex flex-col items-center gap-4 py-8">
-          <div className="spinner" style={{ width: 40, height: 40, borderWidth: 4 }} />
-          <p className="text-gray-400 text-sm">Processing your payment…</p>
+          <div className="spinner" style={{ width: 36, height: 36, borderWidth: 3 }} />
+          <p className="text-gray-500 text-sm">Processing your payment…</p>
         </div>
       ) : (
         <>
           {isPending && (
-            <div className="flex items-center justify-center gap-3 py-4 text-gray-400 text-sm">
+            <div className="flex items-center justify-center gap-3 py-4 text-gray-500 text-sm">
               <div className="spinner" />
               Loading payment…
             </div>
@@ -144,7 +144,7 @@ export default function PaymentStep({ trip, quote, contact, onSuccess, onBack }:
       </p>
 
       {!processing && (
-        <button onClick={onBack} className="text-sm text-gray-500 hover:text-gray-300 transition-colors w-full text-center">
+        <button onClick={onBack} className="text-sm text-gray-600 hover:text-gray-400 transition-colors w-full text-center">
           ← Go back
         </button>
       )}

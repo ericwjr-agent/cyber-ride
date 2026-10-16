@@ -5,6 +5,7 @@ import type { EndpointData } from '@/lib/types';
 import type { TerminalType } from '@/lib/airport';
 import { AIRPORT_TERMINALS } from '@/lib/airport';
 import { geolocateUser } from '@/lib/geolocation';
+import { IconPlane, IconLocation } from '@/components/icons';
 
 interface Props {
   label: string;
@@ -72,31 +73,33 @@ export default function EndpointPicker({ label, value, onChange, mapsReady, allo
 
   return (
     <div className="space-y-3">
-      <label className="block text-sm font-medium text-gray-300">{label}</label>
+      <label className="block text-sm font-medium text-gray-400">{label}</label>
 
       {/* Airport / Address toggle */}
       <div className="grid grid-cols-2 gap-2">
         <button
           type="button"
           onClick={() => onChange({ kind: 'airport', address: '', lat: 0, lng: 0, terminal: value.terminal ?? 'domestic' })}
-          className={`py-2.5 rounded-xl text-sm font-medium border transition-colors ${
+          className={`flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium border transition-all duration-300 ${
             value.kind === 'airport'
-              ? 'border-brand-cyan text-brand-cyan bg-brand-cyan/10'
-              : 'border-gray-700 text-gray-400 hover:border-gray-600'
+              ? 'border-brand-gold/40 text-brand-gold bg-brand-gold/5'
+              : 'border-brand-border text-gray-500 hover:border-brand-gold/20 hover:text-gray-300'
           }`}
         >
-          ✈️ Airport (ATL)
+          <IconPlane className="w-4 h-4" />
+          Airport (ATL)
         </button>
         <button
           type="button"
           onClick={() => onChange({ kind: 'address', address: '', lat: 0, lng: 0 })}
-          className={`py-2.5 rounded-xl text-sm font-medium border transition-colors ${
+          className={`flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium border transition-all duration-300 ${
             value.kind === 'address'
-              ? 'border-brand-cyan text-brand-cyan bg-brand-cyan/10'
-              : 'border-gray-700 text-gray-400 hover:border-gray-600'
+              ? 'border-brand-gold/40 text-brand-gold bg-brand-gold/5'
+              : 'border-brand-border text-gray-500 hover:border-brand-gold/20 hover:text-gray-300'
           }`}
         >
-          📍 Other Address
+          <IconLocation className="w-4 h-4" />
+          Other Address
         </button>
       </div>
 
@@ -107,10 +110,10 @@ export default function EndpointPicker({ label, value, onChange, mapsReady, allo
               key={t}
               type="button"
               onClick={() => onChange({ ...value, kind: 'airport', terminal: t })}
-              className={`py-2.5 px-3 rounded-xl text-xs font-medium border transition-colors text-left ${
+              className={`py-2.5 px-3 rounded-lg text-xs font-medium border transition-all duration-300 text-left ${
                 value.terminal === t
-                  ? 'border-brand-cyan text-brand-cyan bg-brand-cyan/10'
-                  : 'border-gray-700 text-gray-400 hover:border-gray-600'
+                  ? 'border-brand-gold/40 text-brand-gold bg-brand-gold/5'
+                  : 'border-brand-border text-gray-500 hover:border-brand-gold/20 hover:text-gray-300'
               }`}
             >
               {AIRPORT_TERMINALS[t].shortLabel} Terminal
@@ -132,10 +135,11 @@ export default function EndpointPicker({ label, value, onChange, mapsReady, allo
               type="button"
               onClick={handleGeolocate}
               disabled={geoLoading}
-              className="w-full flex items-center justify-center gap-2 border border-gray-700 text-gray-300
-                         hover:border-brand-cyan hover:text-brand-cyan py-2.5 rounded-xl transition-all text-xs font-medium"
+              className="w-full flex items-center justify-center gap-2 border border-brand-border text-gray-400
+                         hover:border-brand-gold/30 hover:text-brand-gold py-2.5 rounded-lg
+                         transition-all duration-300 text-xs font-medium"
             >
-              {geoLoading ? <span className="spinner" /> : <span>📍</span>}
+              {geoLoading ? <span className="spinner" /> : <IconLocation className="w-3.5 h-3.5" />}
               {geoLoading ? 'Getting your location…' : 'Use My Current Location'}
             </button>
           )}
